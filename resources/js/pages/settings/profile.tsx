@@ -33,7 +33,7 @@ export default function Profile({
     const form = useForm<ProfileForm>({
         name: auth.user.name,
         email: auth.user.email,
-    });
+    }).withPrecognition(update());
 
     const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -81,6 +81,7 @@ export default function Profile({
                                 className="mt-1 block w-full"
                                 name="name"
                                 value={form.data.name}
+                                onBlur={() => form.validate('name')}
                                 onChange={(event) =>
                                     form.setData('name', event.target.value)
                                 }
@@ -122,6 +123,7 @@ export default function Profile({
                                 className="mt-1 block w-full"
                                 name="email"
                                 value={form.data.email}
+                                onBlur={() => form.validate('email')}
                                 onChange={(event) =>
                                     form.setData('email', event.target.value)
                                 }

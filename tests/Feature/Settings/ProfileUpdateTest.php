@@ -83,3 +83,104 @@ test('correct password must be provided to delete account', function (): void {
 
     expect($user->fresh())->not->toBeNull();
 });
+
+test('profile precognition validates without updating profile information', function (): void {
+    $user = User::factory()->create();
+    $originalAttributes = $user->refresh()->getAttributes();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->patchJson(route('profile.update'), [
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+        ]);
+
+    $response->assertSuccessfulPrecognition();
+    expect($user->refresh()->getAttributes())->toBe($originalAttributes);
+    $this->assertAuthenticatedAs($user);
+});
+
+test('profile precognition returns 422 for invalid fields', function (): void {
+    $user = User::factory()->create();
+    $originalAttributes = $user->refresh()->getAttributes();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->patchJson(route('profile.update'), [
+            'name' => '',
+            'email' => 'invalid-email',
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['name', 'email']);
+    expect($user->refresh()->getAttributes())->toBe($originalAttributes);
+});
+
+test('profile precognition rejects an email belonging to another user with 422', function (): void {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->withHeader('Precognition-Validate-Only', 'email')
+        ->patchJson(route('profile.update'), [
+            'email' => $otherUser->email,
+        ]);
+
+    $response->assertUnprocessable()->assertJsonValidationErrors('email');
+    expect($user->refresh()->email)->not->toBe($otherUser->email);
+});
+
+test('profile precognition accepts the current email when validating only that field', function (): void {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->withHeader('Precognition-Validate-Only', 'email')
+        ->patchJson(route('profile.update'), [
+            'email' => $user->email,
+        ]);
+
+    $response->assertSuccessfulPrecognition();
+});
+
+test('delete profile precognition validates without deleting the account or ending the session', function (): void {
+    $user = User::factory()->create();
+    $this->withSession(['profile-session' => 'preserved']);
+    $sessionToken = session()->token();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->deleteJson(route('profile.destroy'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertSuccessfulPrecognition()
+        ->assertSessionHas('profile-session', 'preserved');
+    $this->assertModelExists($user);
+    $this->assertAuthenticatedAs($user);
+    expect(session()->token())->toBe($sessionToken);
+});
+
+test('delete profile precognition returns 422 for an incorrect password', function (): void {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->withPrecognition()
+        ->deleteJson(route('profile.destroy'), [
+            'password' => 'wrong-password',
+        ]);
+
+    $response->assertUnprocessable()->assertJsonValidationErrors('password');
+    $this->assertModelExists($user);
+    $this->assertAuthenticatedAs($user);
+});
+
+test('profile precognition requires authentication', function (string $method, string $routeName): void {
+    $response = $this->withPrecognition()->{$method}(route($routeName));
+
+    $response->assertUnauthorized();
+})->with([
+    'update profile' => ['patchJson', 'profile.update'],
+    'delete profile' => ['deleteJson', 'profile.destroy'],
+]);

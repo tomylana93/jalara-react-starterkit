@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Actions\Profile\DeleteProfile;
+use App\Actions\Profile\UpdateProfile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -28,15 +30,9 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, UpdateProfile $updateProfile): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
+        $updateProfile->handle($request->user(), $request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('profile.message.updated')]);
 
@@ -46,17 +42,17 @@ class ProfileController extends Controller
     /**
      * Delete the user's profile.
      */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    public function destroy(ProfileDeleteRequest $request, DeleteProfile $deleteProfile): RedirectResponse
     {
         $user = $request->user();
 
         Auth::logout();
 
-        $user->delete();
+        $deleteProfile->handle($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return to_route('home');
     }
 }

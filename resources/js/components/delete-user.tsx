@@ -24,7 +24,9 @@ export default function DeleteUser() {
 
     const passwordInput = useRef<HTMLInputElement>(null);
 
-    const form = useForm<DeleteUserForm>({ password: '' });
+    const form = useForm<DeleteUserForm>({ password: '' }).withPrecognition(
+        destroy(),
+    );
 
     const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -108,6 +110,7 @@ export default function DeleteUser() {
                                         id="password"
                                         name="password"
                                         value={form.data.password}
+                                        onBlur={() => form.validate('password')}
                                         onChange={(event) =>
                                             form.setData(
                                                 'password',
