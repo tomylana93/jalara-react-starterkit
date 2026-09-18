@@ -34,11 +34,16 @@ void test('production SSR renders localized layouts and keeps consecutive reques
         for (const [component, key] of [
             ['auth/login', 'authentication.heading.login'],
             ['auth/register', 'authentication.heading.register'],
+            ['auth/confirm-password', 'authentication.label.confirm_password'],
+            ['auth/forgot-password', 'authentication.heading.forgot_password'],
+            ['auth/reset-password', 'authentication.heading.reset_password'],
+            ['auth/verify-email', 'authentication.heading.verify_email'],
             [
                 'auth/two-factor-challenge',
                 'authentication.heading.authentication_code',
             ],
             ['settings/appearance', 'appearance.heading.settings'],
+            ['settings/profile', 'profile.heading.settings'],
             ['settings/security', 'security.heading.update_password'],
         ]) {
             const result = await render({
@@ -59,6 +64,8 @@ void test('production SSR renders localized layouts and keeps consecutive reques
                     localization: { locale, fallbackLocale: 'en' },
                     canResetPassword: true,
                     passwordRules: '',
+                    email: 'reset@example.com',
+                    token: 'reset-token',
                     canManagePasskeys: true,
                     passkeys: [],
                     canManageTwoFactor: false,
@@ -79,6 +86,15 @@ void test('production SSR renders localized layouts and keeps consecutive reques
                 `${locale} ${component} must render ${expected}`,
             );
             assert.ok(result.head.join('').includes('Jalara'));
+
+            if (component === 'settings/profile') {
+                assert.ok(result.body.includes('value="Test User"'));
+                assert.ok(result.body.includes('value="test@example.com"'));
+            }
+
+            if (component === 'auth/reset-password') {
+                assert.ok(result.body.includes('value="reset@example.com"'));
+            }
         }
     }
 });

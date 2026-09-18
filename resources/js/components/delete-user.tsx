@@ -1,7 +1,9 @@
 import { useTrans } from '@/hooks/use-trans';
-import { Form } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import { useRef } from 'react';
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import { destroy } from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import type { DeleteUserForm } from '@/types';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -21,6 +23,17 @@ export default function DeleteUser() {
     const { trans } = useTrans();
 
     const passwordInput = useRef<HTMLInputElement>(null);
+
+    const form = useForm<DeleteUserForm>({ password: '' });
+
+    const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        form.submit(destroy(), {
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+            onError: () => passwordInput.current?.focus(),
+        });
+    };
 
     return (
         <div className="space-y-6">
@@ -63,75 +76,65 @@ export default function DeleteUser() {
                             )}{' '}
                         </DialogDescription>
 
-                        <Form
-                            {...ProfileController.destroy.form()}
-                            options={{
-                                preserveScroll: true,
-                            }}
-                            onError={() => passwordInput.current?.focus()}
-                            resetOnSuccess
-                            className="space-y-6"
-                        >
-                            {({ resetAndClearErrors, processing, errors }) => (
-                                <>
-                                    <div className="grid gap-2">
-                                        <Label
-                                            htmlFor="password"
-                                            className="sr-only"
-                                        >
-                                            {' '}
-                                            {trans(
-                                                'authentication.label.password',
-                                            )}{' '}
-                                        </Label>
+                        <form onSubmit={submit} className="space-y-6">
+                            <div className="grid gap-2">
+                                <Label htmlFor="password" className="sr-only">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.password',
+                                    )}{' '}
+                                </Label>
 
-                                        <PasswordInput
-                                            id="password"
-                                            name="password"
-                                            ref={passwordInput}
-                                            placeholder={trans(
-                                                'authentication.label.password',
-                                            )}
-                                            autoComplete="current-password"
-                                        />
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    value={form.data.password}
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'password',
+                                            event.target.value,
+                                        )
+                                    }
+                                    ref={passwordInput}
+                                    placeholder={trans(
+                                        'authentication.label.password',
+                                    )}
+                                    autoComplete="current-password"
+                                />
 
-                                        <InputError message={errors.password} />
-                                    </div>
+                                <InputError message={form.errors.password} />
+                            </div>
 
-                                    <DialogFooter className="gap-2">
-                                        <DialogClose asChild>
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() =>
-                                                    resetAndClearErrors()
-                                                }
-                                            >
-                                                {' '}
-                                                {trans(
-                                                    'common.button.cancel',
-                                                )}{' '}
-                                            </Button>
-                                        </DialogClose>
+                            <DialogFooter className="gap-2">
+                                <DialogClose asChild>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() =>
+                                            form.resetAndClearErrors()
+                                        }
+                                    >
+                                        {' '}
+                                        {trans('common.button.cancel')}{' '}
+                                    </Button>
+                                </DialogClose>
 
-                                        <Button
-                                            variant="destructive"
-                                            disabled={processing}
-                                            asChild
-                                        >
-                                            <button
-                                                type="submit"
-                                                data-test="confirm-delete-user-button"
-                                            >
-                                                {' '}
-                                                {trans(
-                                                    'profile.heading.delete_account',
-                                                )}{' '}
-                                            </button>
-                                        </Button>
-                                    </DialogFooter>
-                                </>
-                            )}
-                        </Form>
+                                <Button
+                                    variant="destructive"
+                                    disabled={form.processing}
+                                    asChild
+                                >
+                                    <button
+                                        type="submit"
+                                        data-test="confirm-delete-user-button"
+                                    >
+                                        {' '}
+                                        {trans(
+                                            'profile.heading.delete_account',
+                                        )}{' '}
+                                    </button>
+                                </Button>
+                            </DialogFooter>
+                        </form>
                     </DialogContent>
                 </Dialog>
             </div>

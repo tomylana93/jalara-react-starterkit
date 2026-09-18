@@ -1,5 +1,6 @@
 import { useTrans } from '@/hooks/use-trans';
-import { Form } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '@/components/heading';
@@ -7,7 +8,11 @@ import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
 import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
-import { disable, enable } from '@/routes/two-factor';
+import {
+    store as enable,
+    destroy as disable,
+} from '@/actions/Laravel/Fortify/Http/Controllers/TwoFactorAuthenticationController';
+import type { EmptyForm } from '@/types';
 
 export type Props = {
     canManageTwoFactor?: boolean;
@@ -33,6 +38,21 @@ export default function ManageTwoFactor(props: Props) {
         errors,
     } = useTwoFactorAuth();
     const [showSetupModal, setShowSetupModal] = useState<boolean>(false);
+    const enableForm = useForm<EmptyForm>({});
+    const disableForm = useForm<EmptyForm>({});
+
+    const enableTwoFactor: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        enableForm.submit(enable(), {
+            onSuccess: () => setShowSetupModal(true),
+        });
+    };
+
+    const disableTwoFactor: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        disableForm.submit(disable());
+    };
+
     const prevTwoFactorEnabled = useRef(twoFactorEnabled);
 
     useEffect(() => {
@@ -62,20 +82,18 @@ export default function ManageTwoFactor(props: Props) {
                     </p>
 
                     <div className="relative inline">
-                        <Form {...disable.form()}>
-                            {({ processing }) => (
-                                <Button
-                                    variant="destructive"
-                                    type="submit"
-                                    disabled={processing}
-                                >
-                                    {' '}
-                                    {trans(
-                                        'security.button.disable_two_factor',
-                                    )}{' '}
-                                </Button>
-                            )}
-                        </Form>
+                        <form onSubmit={disableTwoFactor}>
+                            <Button
+                                variant="destructive"
+                                type="submit"
+                                disabled={disableForm.processing}
+                            >
+                                {' '}
+                                {trans(
+                                    'security.button.disable_two_factor',
+                                )}{' '}
+                            </Button>
+                        </form>
                     </div>
 
                     <TwoFactorRecoveryCodes
@@ -98,19 +116,17 @@ export default function ManageTwoFactor(props: Props) {
                                 {trans('security.button.continue_setup')}{' '}
                             </Button>
                         ) : (
-                            <Form
-                                {...enable.form()}
-                                onSuccess={() => setShowSetupModal(true)}
-                            >
-                                {({ processing }) => (
-                                    <Button type="submit" disabled={processing}>
-                                        {' '}
-                                        {trans(
-                                            'security.button.enable_two_factor',
-                                        )}{' '}
-                                    </Button>
-                                )}
-                            </Form>
+                            <form onSubmit={enableTwoFactor}>
+                                <Button
+                                    type="submit"
+                                    disabled={enableForm.processing}
+                                >
+                                    {' '}
+                                    {trans(
+                                        'security.button.enable_two_factor',
+                                    )}{' '}
+                                </Button>
+                            </form>
                         )}
                     </div>
                 </div>

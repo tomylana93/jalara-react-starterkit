@@ -1,14 +1,23 @@
 import { useTrans } from '@/hooks/use-trans';
 // Components
-import { Form, Head } from '@inertiajs/react';
+import { useForm, Head } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { logout } from '@/routes';
-import { send } from '@/routes/verification';
+import { store } from '@/actions/Laravel/Fortify/Http/Controllers/EmailVerificationNotificationController';
+import type { EmptyForm } from '@/types';
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const { trans } = useTrans();
+
+    const form = useForm<EmptyForm>({});
+
+    const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        form.submit(store());
+    };
 
     return (
         <>
@@ -21,26 +30,17 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 </div>
             )}
 
-            <Form {...send.form()} className="space-y-6 text-center">
-                {({ processing }) => (
-                    <>
-                        <Button disabled={processing} variant="secondary">
-                            {processing && <Spinner />}{' '}
-                            {trans(
-                                'authentication.button.resend_verification',
-                            )}{' '}
-                        </Button>
+            <form onSubmit={submit} className="space-y-6 text-center">
+                <Button disabled={form.processing} variant="secondary">
+                    {form.processing && <Spinner />}{' '}
+                    {trans('authentication.button.resend_verification')}{' '}
+                </Button>
 
-                        <TextLink
-                            href={logout()}
-                            className="mx-auto block text-sm"
-                        >
-                            {' '}
-                            {trans('navigation.button.logout')}{' '}
-                        </TextLink>
-                    </>
-                )}
-            </Form>
+                <TextLink href={logout()} className="mx-auto block text-sm">
+                    {' '}
+                    {trans('navigation.button.logout')}{' '}
+                </TextLink>
+            </form>
         </>
     );
 }

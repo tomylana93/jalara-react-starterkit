@@ -1,5 +1,6 @@
 import { useTrans } from '@/hooks/use-trans';
-import { Form } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import { Eye, EyeOff, LockKeyhole, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AlertError from '@/components/alert-error';
@@ -11,7 +12,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { regenerateRecoveryCodes } from '@/routes/two-factor';
+import { store as regenerateRecoveryCodes } from '@/actions/Laravel/Fortify/Http/Controllers/RecoveryCodeController';
+import type { EmptyForm } from '@/types';
 
 type Props = {
     recoveryCodesList: string[];
@@ -25,6 +27,18 @@ export default function TwoFactorRecoveryCodes({
     errors,
 }: Props) {
     const { trans } = useTrans();
+
+    const form = useForm<EmptyForm>({});
+
+    const regenerate: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        form.submit(regenerateRecoveryCodes(), {
+            preserveScroll: true,
+            onSuccess: () => {
+                void fetchRecoveryCodes();
+            },
+        });
+    };
 
     const [codesAreVisible, setCodesAreVisible] = useState<boolean>(false);
     const codesSectionRef = useRef<HTMLDivElement | null>(null);
@@ -86,25 +100,17 @@ export default function TwoFactorRecoveryCodes({
                     </Button>
 
                     {canRegenerateCodes && (
-                        <Form
-                            {...regenerateRecoveryCodes.form()}
-                            options={{ preserveScroll: true }}
-                            onSuccess={fetchRecoveryCodes}
-                        >
-                            {({ processing }) => (
-                                <Button
-                                    variant="secondary"
-                                    type="submit"
-                                    disabled={processing}
-                                    aria-describedby="regenerate-warning"
-                                >
-                                    <RefreshCw />{' '}
-                                    {trans(
-                                        'security.button.regenerate_codes',
-                                    )}{' '}
-                                </Button>
-                            )}
-                        </Form>
+                        <form onSubmit={regenerate}>
+                            <Button
+                                variant="secondary"
+                                type="submit"
+                                disabled={form.processing}
+                                aria-describedby="regenerate-warning"
+                            >
+                                <RefreshCw />{' '}
+                                {trans('security.button.regenerate_codes')}{' '}
+                            </Button>
+                        </form>
                     )}
                 </div>
                 <div

@@ -1,6 +1,7 @@
 import { useTrans } from '@/hooks/use-trans';
 // Components
-import { Form, Head } from '@inertiajs/react';
+import { useForm, Head } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -8,10 +9,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { login } from '@/routes';
-import { email } from '@/routes/password';
+import { store } from '@/actions/Laravel/Fortify/Http/Controllers/PasswordResetLinkController';
+import type { ForgotPasswordForm } from '@/types';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     const { trans } = useTrans();
+
+    const form = useForm<ForgotPasswordForm>({ email: '' });
+
+    const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        form.submit(store());
+    };
 
     return (
         <>
@@ -24,45 +33,43 @@ export default function ForgotPassword({ status }: { status?: string }) {
             )}
 
             <div className="space-y-6">
-                <Form {...email.form()}>
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">
-                                    {' '}
-                                    {trans(
-                                        'authentication.label.email_address',
-                                    )}{' '}
-                                </Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    autoComplete="off"
-                                    autoFocus
-                                    placeholder="email@example.com"
-                                />
+                <form onSubmit={submit}>
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">
+                            {' '}
+                            {trans('authentication.label.email_address')}{' '}
+                        </Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={form.data.email}
+                            onChange={(event) =>
+                                form.setData('email', event.target.value)
+                            }
+                            autoComplete="off"
+                            autoFocus
+                            placeholder="email@example.com"
+                        />
 
-                                <InputError message={errors.email} />
-                            </div>
+                        <InputError message={form.errors.email} />
+                    </div>
 
-                            <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                    )}{' '}
-                                    {trans(
-                                        'authentication.button.email_reset_link',
-                                    )}{' '}
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </Form>
+                    <div className="my-6 flex items-center justify-start">
+                        <Button
+                            className="w-full"
+                            disabled={form.processing}
+                            data-test="email-password-reset-link-button"
+                        >
+                            {form.processing && (
+                                <LoaderCircle className="h-4 w-4 animate-spin" />
+                            )}{' '}
+                            {trans(
+                                'authentication.button.email_reset_link',
+                            )}{' '}
+                        </Button>
+                    </div>
+                </form>
 
                 <div className="text-muted-foreground space-x-1 text-center text-sm">
                     <span> {trans('authentication.link.return_login')} </span>

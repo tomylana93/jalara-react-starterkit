@@ -1,5 +1,6 @@
 import { useTrans } from '@/hooks/use-trans';
-import { Form } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import type { SubmitEventHandler } from 'react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -22,7 +23,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
-import { confirm } from '@/routes/two-factor';
+import { store as confirm } from '@/actions/Laravel/Fortify/Http/Controllers/ConfirmedTwoFactorAuthenticationController';
+import type { ConfirmTwoFactorForm } from '@/types';
 
 function GridScanIcon() {
     return (
@@ -151,7 +153,19 @@ function TwoFactorVerificationStep({
 }) {
     const { trans } = useTrans();
 
-    const [code, setCode] = useState<string>('');
+    const form = useForm<ConfirmTwoFactorForm>({ code: '' });
+
+    const submit: SubmitEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+        form.submit(confirm(), {
+            errorBag: 'confirmTwoFactorAuthentication',
+            onError: () => form.reset(),
+            onSuccess: () => {
+                form.reset();
+                onClose();
+            },
+        });
+    };
     const pinInputContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -161,79 +175,59 @@ function TwoFactorVerificationStep({
     }, []);
 
     return (
-        <Form
-            {...confirm.form()}
-            onSuccess={() => onClose()}
-            resetOnError
-            resetOnSuccess
-        >
-            {({
-                processing,
-                errors,
-            }: {
-                processing: boolean;
-                errors?: { confirmTwoFactorAuthentication?: { code?: string } };
-            }) => (
-                <>
-                    <div
-                        ref={pinInputContainerRef}
-                        className="relative w-full space-y-3"
+        <form onSubmit={submit}>
+            <div
+                ref={pinInputContainerRef}
+                className="relative w-full space-y-3"
+            >
+                <div className="flex w-full flex-col items-center space-y-3 py-2">
+                    <InputOTP
+                        id="otp"
+                        name="code"
+                        maxLength={OTP_MAX_LENGTH}
+                        value={form.data.code}
+                        onChange={(value) => form.setData('code', value)}
+                        disabled={form.processing}
+                        pattern={REGEXP_ONLY_DIGITS}
+                        autoFocus
                     >
-                        <div className="flex w-full flex-col items-center space-y-3 py-2">
-                            <InputOTP
-                                id="otp"
-                                name="code"
-                                maxLength={OTP_MAX_LENGTH}
-                                onChange={setCode}
-                                disabled={processing}
-                                pattern={REGEXP_ONLY_DIGITS}
-                                autoFocus
-                            >
-                                <InputOTPGroup>
-                                    {Array.from(
-                                        { length: OTP_MAX_LENGTH },
-                                        (_, index) => (
-                                            <InputOTPSlot
-                                                key={index}
-                                                index={index}
-                                            />
-                                        ),
-                                    )}
-                                </InputOTPGroup>
-                            </InputOTP>
-                            <InputError
-                                message={
-                                    errors?.confirmTwoFactorAuthentication?.code
-                                }
-                            />
-                        </div>
+                        <InputOTPGroup>
+                            {Array.from(
+                                { length: OTP_MAX_LENGTH },
+                                (_, index) => (
+                                    <InputOTPSlot key={index} index={index} />
+                                ),
+                            )}
+                        </InputOTPGroup>
+                    </InputOTP>
+                    <InputError message={form.errors.code} />
+                </div>
 
-                        <div className="flex w-full space-x-5">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="flex-1"
-                                onClick={onBack}
-                                disabled={processing}
-                            >
-                                {' '}
-                                {trans('common.button.back')}{' '}
-                            </Button>
-                            <Button
-                                type="submit"
-                                className="flex-1"
-                                disabled={
-                                    processing || code.length < OTP_MAX_LENGTH
-                                }
-                            >
-                                {' '}
-                                {trans('common.button.confirm')}{' '}
-                            </Button>
-                        </div>
-                    </div>
-                </>
-            )}
-        </Form>
+                <div className="flex w-full space-x-5">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={onBack}
+                        disabled={form.processing}
+                    >
+                        {' '}
+                        {trans('common.button.back')}{' '}
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="flex-1"
+                        disabled={
+                            form.processing ||
+                            form.data.code.length < OTP_MAX_LENGTH
+                        }
+                    >
+                        {' '}
+                        {trans('common.button.confirm')}{' '}
+                    </Button>
+                </div>
+            </div>
+        </form>
     );
 }
 
