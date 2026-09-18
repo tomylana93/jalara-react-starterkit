@@ -59,26 +59,48 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
+        "rector": [
+            "rector process"
+        ],
+        "rector:check": [
+            "rector process --dry-run"
+        ],
         "lint": [
+            "@rector",
             "pint --parallel"
         ],
         "lint:check": [
+            "@rector:check",
             "pint --parallel --test"
         ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "pnpm run check",
             "pnpm run types:check",
-            "@test"
+            "@test:check",
+            "@php artisan test --ci"
+        ],
+        "ci:baseline": [
+            "Composer\\Config::disableProcessTimeout",
+            "pnpm run check",
+            "pnpm run types:check",
+            "@test:baseline"
         ],
         "types:check": [
             "phpstan analyse"
         ],
-        "test": [
+        "test:check": [
             "@php artisan config:clear --ansi",
             "@lint:check",
-            "@types:check",
+            "@types:check"
+        ],
+        "test": [
+            "@test:check",
             "@php artisan test"
+        ],
+        "test:baseline": [
+            "@test:check",
+            "pest --ci --parallel --tia --fresh"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
