@@ -8,6 +8,7 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
     Dialog,
     DialogClose,
@@ -17,7 +18,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 
 export default function DeleteUser() {
     const { trans } = useTrans();
@@ -36,13 +36,13 @@ export default function DeleteUser() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
             <Heading
                 variant="small"
                 title={trans('profile.heading.delete_account')}
                 description={trans('profile.description.delete_account')}
             />
-            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
+            <div className="flex flex-col gap-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
                 <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
                     <p className="font-medium">
                         {' '}
@@ -76,64 +76,87 @@ export default function DeleteUser() {
                             )}{' '}
                         </DialogDescription>
 
-                        <form onSubmit={submit} className="space-y-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="password" className="sr-only">
-                                    {' '}
-                                    {trans(
-                                        'authentication.label.password',
-                                    )}{' '}
-                                </Label>
-
-                                <PasswordInput
-                                    id="password"
-                                    name="password"
-                                    value={form.data.password}
-                                    onChange={(event) =>
-                                        form.setData(
-                                            'password',
-                                            event.target.value,
-                                        )
-                                    }
-                                    ref={passwordInput}
-                                    placeholder={trans(
-                                        'authentication.label.password',
-                                    )}
-                                    autoComplete="current-password"
-                                />
-
-                                <InputError message={form.errors.password} />
-                            </div>
-
-                            <DialogFooter className="gap-2">
-                                <DialogClose asChild>
-                                    <Button
-                                        variant="secondary"
-                                        onClick={() =>
-                                            form.resetAndClearErrors()
-                                        }
-                                    >
-                                        {' '}
-                                        {trans('common.button.cancel')}{' '}
-                                    </Button>
-                                </DialogClose>
-
-                                <Button
-                                    variant="destructive"
-                                    disabled={form.processing}
-                                    asChild
+                        <form
+                            noValidate
+                            onSubmit={submit}
+                            className="flex flex-col gap-6"
+                        >
+                            <FieldGroup>
+                                <Field
+                                    data-invalid={Boolean(form.errors.password)}
+                                    className="grid gap-2"
                                 >
-                                    <button
-                                        type="submit"
-                                        data-test="confirm-delete-user-button"
+                                    <FieldLabel
+                                        htmlFor="password"
+                                        className="sr-only"
                                     >
                                         {' '}
                                         {trans(
-                                            'profile.heading.delete_account',
+                                            'authentication.label.password',
                                         )}{' '}
-                                    </button>
-                                </Button>
-                            </DialogFooter>
+                                    </FieldLabel>
+
+                                    <PasswordInput
+                                        aria-invalid={Boolean(
+                                            form.errors.password,
+                                        )}
+                                        aria-describedby={
+                                            form.errors.password
+                                                ? 'delete-user-password-error'
+                                                : undefined
+                                        }
+                                        id="password"
+                                        name="password"
+                                        value={form.data.password}
+                                        onChange={(event) =>
+                                            form.setData(
+                                                'password',
+                                                event.target.value,
+                                            )
+                                        }
+                                        ref={passwordInput}
+                                        placeholder={trans(
+                                            'authentication.label.password',
+                                        )}
+                                        autoComplete="current-password"
+                                    />
+
+                                    <InputError
+                                        id="delete-user-password-error"
+                                        message={form.errors.password}
+                                    />
+                                </Field>
+
+                                <DialogFooter className="gap-2">
+                                    <DialogClose asChild>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() =>
+                                                form.resetAndClearErrors()
+                                            }
+                                        >
+                                            {' '}
+                                            {trans('common.button.cancel')}{' '}
+                                        </Button>
+                                    </DialogClose>
+
+                                    <Button
+                                        variant="destructive"
+                                        disabled={form.processing}
+                                        asChild
+                                    >
+                                        <button
+                                            type="submit"
+                                            data-test="confirm-delete-user-button"
+                                        >
+                                            {' '}
+                                            {trans(
+                                                'profile.heading.delete_account',
+                                            )}{' '}
+                                        </button>
+                                    </Button>
+                                </DialogFooter>
+                            </FieldGroup>
                         </form>
                     </DialogContent>
                 </Dialog>

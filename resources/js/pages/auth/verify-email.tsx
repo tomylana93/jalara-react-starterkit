@@ -30,7 +30,11 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 </div>
             )}
 
-            <form onSubmit={submit} className="space-y-6 text-center">
+            <form
+                noValidate
+                onSubmit={submit}
+                className="flex flex-col gap-6 text-center"
+            >
                 <Button disabled={form.processing} variant="secondary">
                     {form.processing && <Spinner />}{' '}
                     {trans('authentication.button.resend_verification')}{' '}

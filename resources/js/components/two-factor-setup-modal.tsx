@@ -1,12 +1,12 @@
 import { useTrans } from '@/hooks/use-trans';
 import { useForm } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AlertError from '@/components/alert-error';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Field, FieldGroup } from '@/components/ui/field';
 import {
     Dialog,
     DialogContent,
@@ -100,7 +100,7 @@ function TwoFactorSetupStep({
                         </div>
                     </div>
 
-                    <div className="flex w-full space-x-5">
+                    <div className="flex w-full gap-5">
                         <Button className="w-full" onClick={onNextStep}>
                             {buttonText}
                         </Button>
@@ -175,58 +175,81 @@ function TwoFactorVerificationStep({
     }, []);
 
     return (
-        <form onSubmit={submit}>
-            <div
-                ref={pinInputContainerRef}
-                className="relative w-full space-y-3"
-            >
-                <div className="flex w-full flex-col items-center space-y-3 py-2">
-                    <InputOTP
-                        id="otp"
-                        name="code"
-                        maxLength={OTP_MAX_LENGTH}
-                        value={form.data.code}
-                        onChange={(value) => form.setData('code', value)}
-                        disabled={form.processing}
-                        pattern={REGEXP_ONLY_DIGITS}
-                        autoFocus
+        <form noValidate onSubmit={submit}>
+            <FieldGroup>
+                <div
+                    ref={pinInputContainerRef}
+                    className="relative flex w-full flex-col gap-3"
+                >
+                    <Field
+                        data-invalid={Boolean(form.errors.code)}
+                        className="flex w-full flex-col items-center gap-3 py-2"
                     >
-                        <InputOTPGroup>
-                            {Array.from(
-                                { length: OTP_MAX_LENGTH },
-                                (_, index) => (
-                                    <InputOTPSlot key={index} index={index} />
-                                ),
+                        <InputOTP
+                            inputMode="numeric"
+                            aria-label={trans(
+                                'authentication.heading.authentication_code',
                             )}
-                        </InputOTPGroup>
-                    </InputOTP>
-                    <InputError message={form.errors.code} />
-                </div>
+                            aria-invalid={Boolean(form.errors.code)}
+                            aria-describedby={
+                                form.errors.code
+                                    ? 'two-factor-setup-modal-code-error'
+                                    : undefined
+                            }
+                            id="otp"
+                            name="code"
+                            maxLength={OTP_MAX_LENGTH}
+                            value={form.data.code}
+                            onChange={(value) => form.setData('code', value)}
+                            disabled={form.processing}
+                            autoFocus
+                        >
+                            <InputOTPGroup>
+                                {Array.from(
+                                    { length: OTP_MAX_LENGTH },
+                                    (_, index) => (
+                                        <InputOTPSlot
+                                            aria-invalid={Boolean(
+                                                form.errors.code,
+                                            )}
+                                            key={index}
+                                            index={index}
+                                        />
+                                    ),
+                                )}
+                            </InputOTPGroup>
+                        </InputOTP>
+                        <InputError
+                            id="two-factor-setup-modal-code-error"
+                            message={form.errors.code}
+                        />
+                    </Field>
 
-                <div className="flex w-full space-x-5">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        className="flex-1"
-                        onClick={onBack}
-                        disabled={form.processing}
-                    >
-                        {' '}
-                        {trans('common.button.back')}{' '}
-                    </Button>
-                    <Button
-                        type="submit"
-                        className="flex-1"
-                        disabled={
-                            form.processing ||
-                            form.data.code.length < OTP_MAX_LENGTH
-                        }
-                    >
-                        {' '}
-                        {trans('common.button.confirm')}{' '}
-                    </Button>
+                    <div className="flex w-full gap-5">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="flex-1"
+                            onClick={onBack}
+                            disabled={form.processing}
+                        >
+                            {' '}
+                            {trans('common.button.back')}{' '}
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="flex-1"
+                            disabled={
+                                form.processing ||
+                                form.data.code.length < OTP_MAX_LENGTH
+                            }
+                        >
+                            {' '}
+                            {trans('common.button.confirm')}{' '}
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            </FieldGroup>
         </form>
     );
 }

@@ -8,7 +8,8 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+
 import { edit } from '@/routes/security';
 import type { Props as ManagePasskeysProps } from '@/components/manage-passkeys';
 import ManagePasskeys from '@/components/manage-passkeys';
@@ -56,104 +57,152 @@ export default function Security(props: Props) {
 
             <h1 className="sr-only"> {trans('security.heading.settings')} </h1>
 
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
                 <Heading
                     variant="small"
                     title={trans('security.heading.update_password')}
                     description={trans('security.description.update_password')}
                 />
 
-                <form onSubmit={submit} className="space-y-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="current_password">
-                            {' '}
-                            {trans('security.label.current_password')}{' '}
-                        </Label>
-
-                        <PasswordInput
-                            id="current_password"
-                            ref={currentPasswordInput}
-                            name="current_password"
-                            value={form.data.current_password}
-                            onChange={(event) =>
-                                form.setData(
-                                    'current_password',
-                                    event.target.value,
-                                )
-                            }
-                            className="mt-1 block w-full"
-                            autoComplete="current-password"
-                            placeholder={trans(
-                                'security.label.current_password',
-                            )}
-                        />
-
-                        <InputError message={form.errors.current_password} />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">
-                            {' '}
-                            {trans('security.label.new_password')}{' '}
-                        </Label>
-
-                        <PasswordInput
-                            id="password"
-                            ref={passwordInput}
-                            name="password"
-                            value={form.data.password}
-                            onChange={(event) =>
-                                form.setData('password', event.target.value)
-                            }
-                            className="mt-1 block w-full"
-                            autoComplete="new-password"
-                            placeholder={trans('security.label.new_password')}
-                            passwordrules={props.passwordRules}
-                        />
-
-                        <InputError message={form.errors.password} />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">
-                            {' '}
-                            {trans(
-                                'authentication.label.confirm_password',
-                            )}{' '}
-                        </Label>
-
-                        <PasswordInput
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            value={form.data.password_confirmation}
-                            onChange={(event) =>
-                                form.setData(
-                                    'password_confirmation',
-                                    event.target.value,
-                                )
-                            }
-                            className="mt-1 block w-full"
-                            autoComplete="new-password"
-                            placeholder={trans(
-                                'authentication.label.confirm_password',
-                            )}
-                            passwordrules={props.passwordRules}
-                        />
-
-                        <InputError
-                            message={form.errors.password_confirmation}
-                        />
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <Button
-                            disabled={form.processing}
-                            data-test="update-password-button"
+                <form
+                    noValidate
+                    onSubmit={submit}
+                    className="flex flex-col gap-6"
+                >
+                    <FieldGroup>
+                        <Field
+                            data-invalid={Boolean(form.errors.current_password)}
+                            className="grid gap-2"
                         >
-                            {' '}
-                            {trans('common.button.save')}{' '}
-                        </Button>
-                    </div>
+                            <FieldLabel htmlFor="current_password">
+                                {' '}
+                                {trans('security.label.current_password')}{' '}
+                            </FieldLabel>
+
+                            <PasswordInput
+                                aria-invalid={Boolean(
+                                    form.errors.current_password,
+                                )}
+                                aria-describedby={
+                                    form.errors.current_password
+                                        ? 'security-current-password-error'
+                                        : undefined
+                                }
+                                id="current_password"
+                                ref={currentPasswordInput}
+                                name="current_password"
+                                value={form.data.current_password}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'current_password',
+                                        event.target.value,
+                                    )
+                                }
+                                className="mt-1 block w-full"
+                                autoComplete="current-password"
+                                placeholder={trans(
+                                    'security.label.current_password',
+                                )}
+                            />
+
+                            <InputError
+                                id="security-current-password-error"
+                                message={form.errors.current_password}
+                            />
+                        </Field>
+
+                        <Field
+                            data-invalid={Boolean(form.errors.password)}
+                            className="grid gap-2"
+                        >
+                            <FieldLabel htmlFor="password">
+                                {' '}
+                                {trans('security.label.new_password')}{' '}
+                            </FieldLabel>
+
+                            <PasswordInput
+                                aria-invalid={Boolean(form.errors.password)}
+                                aria-describedby={
+                                    form.errors.password
+                                        ? 'security-password-error'
+                                        : undefined
+                                }
+                                id="password"
+                                ref={passwordInput}
+                                name="password"
+                                value={form.data.password}
+                                onChange={(event) =>
+                                    form.setData('password', event.target.value)
+                                }
+                                className="mt-1 block w-full"
+                                autoComplete="new-password"
+                                placeholder={trans(
+                                    'security.label.new_password',
+                                )}
+                                passwordrules={props.passwordRules}
+                            />
+
+                            <InputError
+                                id="security-password-error"
+                                message={form.errors.password}
+                            />
+                        </Field>
+
+                        <Field
+                            data-invalid={Boolean(
+                                form.errors.password_confirmation,
+                            )}
+                            className="grid gap-2"
+                        >
+                            <FieldLabel htmlFor="password_confirmation">
+                                {' '}
+                                {trans(
+                                    'authentication.label.confirm_password',
+                                )}{' '}
+                            </FieldLabel>
+
+                            <PasswordInput
+                                aria-invalid={Boolean(
+                                    form.errors.password_confirmation,
+                                )}
+                                aria-describedby={
+                                    form.errors.password_confirmation
+                                        ? 'security-password-confirmation-error'
+                                        : undefined
+                                }
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                value={form.data.password_confirmation}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'password_confirmation',
+                                        event.target.value,
+                                    )
+                                }
+                                className="mt-1 block w-full"
+                                autoComplete="new-password"
+                                placeholder={trans(
+                                    'authentication.label.confirm_password',
+                                )}
+                                passwordrules={props.passwordRules}
+                            />
+
+                            <InputError
+                                id="security-password-confirmation-error"
+                                message={form.errors.password_confirmation}
+                            />
+                        </Field>
+
+                        <div className="flex items-center gap-4">
+                            <Button
+                                disabled={form.processing}
+                                data-test="update-password-button"
+                            >
+                                {' '}
+                                {trans('common.button.save')}{' '}
+                            </Button>
+                        </div>
+                    </FieldGroup>
                 </form>
             </div>
 

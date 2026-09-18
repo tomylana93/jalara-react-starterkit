@@ -1,10 +1,10 @@
 import { useTrans } from '@/hooks/use-trans';
 import { useForm, Head, setLayoutProps } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useMemo, useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
     InputOTP,
@@ -76,85 +76,133 @@ export default function TwoFactorChallenge() {
         <>
             <Head title={trans('security.heading.two_factor')} />
 
-            <div className="space-y-6">
-                <form onSubmit={submit} className="space-y-4">
-                    {showRecoveryInput ? (
-                        <>
-                            <Input
-                                name="recovery_code"
-                                value={recoveryForm.data.recovery_code}
-                                onChange={(event) =>
-                                    recoveryForm.setData(
-                                        'recovery_code',
-                                        event.target.value,
-                                    )
-                                }
-                                type="text"
-                                placeholder={trans(
-                                    'authentication.placeholder.recovery_code',
+            <div className="flex flex-col gap-6">
+                <form
+                    noValidate
+                    onSubmit={submit}
+                    className="flex flex-col gap-4"
+                >
+                    <FieldGroup>
+                        {showRecoveryInput ? (
+                            <Field
+                                data-invalid={Boolean(
+                                    recoveryForm.errors.recovery_code,
                                 )}
-                                autoFocus={showRecoveryInput}
-                                required
-                            />
-                            <InputError
-                                message={recoveryForm.errors.recovery_code}
-                            />
-                        </>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center space-y-3 text-center">
-                            <div className="flex w-full items-center justify-center">
-                                <InputOTP
-                                    name="code"
-                                    maxLength={OTP_MAX_LENGTH}
-                                    value={codeForm.data.code}
-                                    onChange={(value) =>
-                                        codeForm.setData('code', value)
-                                    }
-                                    disabled={processing}
-                                    pattern={REGEXP_ONLY_DIGITS}
-                                    autoFocus
+                            >
+                                <FieldLabel
+                                    htmlFor="recovery-code"
+                                    className="sr-only"
                                 >
-                                    <InputOTPGroup>
-                                        {Array.from(
-                                            { length: OTP_MAX_LENGTH },
-                                            (_, index) => (
-                                                <InputOTPSlot
-                                                    key={index}
-                                                    index={index}
-                                                />
-                                            ),
+                                    {trans(
+                                        'authentication.placeholder.recovery_code',
+                                    )}
+                                </FieldLabel>
+                                <Input
+                                    aria-invalid={Boolean(
+                                        recoveryForm.errors.recovery_code,
+                                    )}
+                                    aria-describedby={
+                                        recoveryForm.errors.recovery_code
+                                            ? 'two-factor-challenge-recovery-code-error'
+                                            : undefined
+                                    }
+                                    id="recovery-code"
+                                    name="recovery_code"
+                                    value={recoveryForm.data.recovery_code}
+                                    onChange={(event) =>
+                                        recoveryForm.setData(
+                                            'recovery_code',
+                                            event.target.value,
+                                        )
+                                    }
+                                    type="text"
+                                    placeholder={trans(
+                                        'authentication.placeholder.recovery_code',
+                                    )}
+                                    autoFocus={showRecoveryInput}
+                                />
+                                <InputError
+                                    id="two-factor-challenge-recovery-code-error"
+                                    message={recoveryForm.errors.recovery_code}
+                                />
+                            </Field>
+                        ) : (
+                            <Field
+                                data-invalid={Boolean(codeForm.errors.code)}
+                                className="flex flex-col items-center justify-center gap-3 text-center"
+                            >
+                                <div className="flex w-full items-center justify-center">
+                                    <InputOTP
+                                        inputMode="numeric"
+                                        aria-label={trans(
+                                            'authentication.heading.authentication_code',
                                         )}
-                                    </InputOTPGroup>
-                                </InputOTP>
-                            </div>
-                            <InputError message={codeForm.errors.code} />
-                        </div>
-                    )}
+                                        aria-invalid={Boolean(
+                                            codeForm.errors.code,
+                                        )}
+                                        aria-describedby={
+                                            codeForm.errors.code
+                                                ? 'two-factor-challenge-code-error'
+                                                : undefined
+                                        }
+                                        name="code"
+                                        maxLength={OTP_MAX_LENGTH}
+                                        value={codeForm.data.code}
+                                        onChange={(value) =>
+                                            codeForm.setData('code', value)
+                                        }
+                                        disabled={processing}
+                                        autoFocus
+                                    >
+                                        <InputOTPGroup>
+                                            {Array.from(
+                                                { length: OTP_MAX_LENGTH },
+                                                (_, index) => (
+                                                    <InputOTPSlot
+                                                        aria-invalid={Boolean(
+                                                            codeForm.errors
+                                                                .code,
+                                                        )}
+                                                        key={index}
+                                                        index={index}
+                                                    />
+                                                ),
+                                            )}
+                                        </InputOTPGroup>
+                                    </InputOTP>
+                                </div>
+                                <InputError
+                                    id="two-factor-challenge-code-error"
+                                    message={codeForm.errors.code}
+                                />
+                            </Field>
+                        )}
 
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={processing}
-                    >
-                        {' '}
-                        {trans('common.button.continue')}{' '}
-                    </Button>
-
-                    <div className="text-muted-foreground text-center text-sm">
-                        <span>
-                            {' '}
-                            {trans(
-                                'authentication.description.alternative',
-                            )}{' '}
-                        </span>
-                        <button
-                            type="button"
-                            className="text-foreground cursor-pointer underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                            onClick={toggleRecoveryMode}
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={processing}
                         >
-                            {authConfigContent.toggleText}
-                        </button>
-                    </div>
+                            {' '}
+                            {trans('common.button.continue')}{' '}
+                        </Button>
+
+                        <div className="text-muted-foreground text-center text-sm">
+                            <span>
+                                {' '}
+                                {trans(
+                                    'authentication.description.alternative',
+                                )}{' '}
+                            </span>
+                            <button
+                                type="button"
+                                className="text-foreground cursor-pointer underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                onClick={toggleRecoveryMode}
+                            >
+                                {authConfigContent.toggleText}
+                            </button>
+                        </div>
+                    </FieldGroup>
                 </form>
             </div>
         </>

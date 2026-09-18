@@ -100,7 +100,7 @@ export default function TwoFactorRecoveryCodes({
                     </Button>
 
                     {canRegenerateCodes && (
-                        <form onSubmit={regenerate}>
+                        <form noValidate onSubmit={regenerate}>
                             <Button
                                 variant="secondary"
                                 type="submit"

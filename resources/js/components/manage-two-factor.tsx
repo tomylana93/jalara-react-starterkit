@@ -68,21 +68,21 @@ export default function ManageTwoFactor(props: Props) {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
             <Heading
                 variant="small"
                 title={trans('security.heading.two_factor')}
                 description={trans('security.description.two_factor')}
             />
             {twoFactorEnabled ? (
-                <div className="flex flex-col items-start justify-start space-y-4">
+                <div className="flex flex-col items-start justify-start gap-4">
                     <p className="text-muted-foreground text-sm">
                         {' '}
                         {trans('security.description.two_factor_enabled')}{' '}
                     </p>
 
                     <div className="relative inline">
-                        <form onSubmit={disableTwoFactor}>
+                        <form noValidate onSubmit={disableTwoFactor}>
                             <Button
                                 variant="destructive"
                                 type="submit"
@@ -103,7 +103,7 @@ export default function ManageTwoFactor(props: Props) {
                     />
                 </div>
             ) : (
-                <div className="flex flex-col items-start justify-start space-y-4">
+                <div className="flex flex-col items-start justify-start gap-4">
                     <p className="text-muted-foreground text-sm">
                         {' '}
                         {trans('security.description.two_factor_disabled')}{' '}
@@ -116,7 +116,7 @@ export default function ManageTwoFactor(props: Props) {
                                 {trans('security.button.continue_setup')}{' '}
                             </Button>
                         ) : (
-                            <form onSubmit={enableTwoFactor}>
+                            <form noValidate onSubmit={enableTwoFactor}>
                                 <Button
                                     type="submit"
                                     disabled={enableForm.processing}

@@ -3,8 +3,8 @@ import { usePasskeyRegister } from '@laravel/passkeys/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 type Props = {
     onSuccess: () => void;
@@ -79,42 +79,49 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
 
     return (
         <form
+            noValidate
             onSubmit={handleSubmit}
-            className="border-border bg-muted/50 space-y-4 rounded-lg border p-4"
+            className="border-border bg-muted/50 flex flex-col gap-4 rounded-lg border p-4"
         >
-            <div className="grid gap-2">
-                <Label htmlFor="passkey-name">
-                    {' '}
-                    {trans('security.label.passkey_name')}{' '}
-                </Label>
-                <Input
-                    id="passkey-name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={trans('security.placeholder.passkey_name')}
-                    className="border-foreground/20 mt-1 block w-full"
-                    autoFocus
-                />
-                <p className="text-muted-foreground text-xs">
-                    {' '}
-                    {trans('security.description.passkey_name')}{' '}
-                </p>
-            </div>
+            <FieldGroup>
+                <Field className="grid gap-2">
+                    <FieldLabel htmlFor="passkey-name">
+                        {' '}
+                        {trans('security.label.passkey_name')}{' '}
+                    </FieldLabel>
+                    <Input
+                        id="passkey-name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder={trans('security.placeholder.passkey_name')}
+                        className="border-foreground/20 mt-1 block w-full"
+                        autoFocus
+                    />
+                    <p className="text-muted-foreground text-xs">
+                        {' '}
+                        {trans('security.description.passkey_name')}{' '}
+                    </p>
+                </Field>
 
-            {error && <InputError message={error} />}
+                {error && <InputError message={error} />}
 
-            <div className="flex gap-2">
-                <Button type="submit" disabled={isLoading || !name.trim()}>
-                    {isLoading
-                        ? trans('security.label.registering')
-                        : trans('security.button.register_passkey')}
-                </Button>
-                <Button type="button" variant="ghost" onClick={handleCancel}>
-                    {' '}
-                    {trans('common.button.cancel')}{' '}
-                </Button>
-            </div>
+                <div className="flex gap-2">
+                    <Button type="submit" disabled={isLoading || !name.trim()}>
+                        {isLoading
+                            ? trans('security.label.registering')
+                            : trans('security.button.register_passkey')}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={handleCancel}
+                    >
+                        {' '}
+                        {trans('common.button.cancel')}{' '}
+                    </Button>
+                </div>
+            </FieldGroup>
         </form>
     );
 }
