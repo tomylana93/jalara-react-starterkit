@@ -37,6 +37,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $avatar = $user?->getFirstMedia('avatar');
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -45,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'fallbackLocale' => config('app.fallback_locale'),
             ],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [...$user->toArray(), 'avatar' => $avatar?->getAvailableUrl(['thumbnail'])] : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Settings\AvatarController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -11,6 +12,12 @@ Route::middleware(['auth'])->group(function (): void {
     Route::redirect('settings', '/settings/profile');
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('settings/profile/avatar', [AvatarController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('profile.avatar.store');
+    Route::delete('settings/profile/avatar', [AvatarController::class, 'destroy'])
+        ->middleware('throttle:6,1')
+        ->name('profile.avatar.destroy');
     Route::patch('settings/profile', [ProfileController::class, 'update'])
         ->middleware('precognitive')
         ->name('profile.update');

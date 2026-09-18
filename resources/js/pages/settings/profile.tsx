@@ -5,6 +5,8 @@ import { Link } from '@inertiajs/react';
 import { update } from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import type { ProfileForm } from '@/types';
 import DeleteUser from '@/components/delete-user';
+import AvatarUploader from '@/components/avatar-uploader';
+import type { UploadedFile } from '@/types/uploads';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -22,9 +24,11 @@ type PageProps = {
 export default function Profile({
     mustVerifyEmail,
     status,
+    avatarMedia = null,
 }: {
     mustVerifyEmail: boolean;
     status?: string;
+    avatarMedia?: UploadedFile | null;
 }) {
     const { trans } = useTrans();
 
@@ -53,6 +57,11 @@ export default function Profile({
                     variant="small"
                     title={trans('navigation.label.profile')}
                     description={trans('profile.description.settings')}
+                />
+
+                <AvatarUploader
+                    initialFile={avatarMedia}
+                    name={auth.user.name}
                 />
 
                 <form

@@ -7,6 +7,7 @@ use App\Actions\Profile\UpdateProfile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Http\Resources\UploadedFileResource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $avatar = $request->user()->getFirstMedia('avatar');
+
         return Inertia::render('settings/profile', [
+            'avatarMedia' => $avatar ? new UploadedFileResource($avatar)->resolve($request) : null,
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
         ]);
