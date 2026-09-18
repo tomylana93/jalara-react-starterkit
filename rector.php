@@ -16,6 +16,7 @@ return RectorConfig::configure()
         __DIR__.'/routes',
         __DIR__.'/tests',
     ])
+    ->withComposerBased(laravel: true)
     ->withPhpSets(php85: true)
     ->withSets([
         LaravelSetList::LARAVEL_CODE_QUALITY,
