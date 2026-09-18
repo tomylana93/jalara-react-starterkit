@@ -1,4 +1,4 @@
-import AuthLayoutTemplate from '@/layouts/auth/auth-simple-layout';
+import AuthLayoutTemplate from '@/layouts/auth/auth-split-layout';
 import { useTrans } from '@/hooks/use-trans';
 import type { TextMessageKey } from '@/types';
 export default function AuthLayout({
