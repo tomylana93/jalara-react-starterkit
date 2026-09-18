@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { Localization } from '@/types';
 
 declare module 'react' {
     interface InputHTMLAttributes<T> {
@@ -9,6 +10,7 @@ declare module 'react' {
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
+            localization: Localization;
             name: string;
             auth: Auth;
             sidebarOpen: boolean;

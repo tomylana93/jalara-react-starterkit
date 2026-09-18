@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
 import {
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export function UserMenuContent({ user }: Props) {
+    const { trans } = useTrans();
+
     const cleanup = useMobileNavigation();
 
     const handleLogout = () => {
@@ -40,8 +43,8 @@ export function UserMenuContent({ user }: Props) {
                         prefetch
                         onClick={cleanup}
                     >
-                        <Settings className="mr-2" />
-                        Settings
+                        <Settings className="mr-2" />{' '}
+                        {trans('navigation.label.settings')}{' '}
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -54,8 +57,8 @@ export function UserMenuContent({ user }: Props) {
                     onClick={handleLogout}
                     data-test="logout-button"
                 >
-                    <LogOut className="mr-2" />
-                    Log out
+                    <LogOut className="mr-2" />{' '}
+                    {trans('navigation.button.logout')}{' '}
                 </Link>
             </DropdownMenuItem>
         </>

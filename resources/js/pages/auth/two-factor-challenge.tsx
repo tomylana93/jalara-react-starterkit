@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useMemo, useState } from 'react';
@@ -13,6 +14,8 @@ import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
 import { store } from '@/routes/two-factor/login';
 
 export default function TwoFactorChallenge() {
+    const { trans } = useTrans();
+
     const [showRecoveryInput, setShowRecoveryInput] = useState<boolean>(false);
     const [code, setCode] = useState<string>('');
 
@@ -23,20 +26,22 @@ export default function TwoFactorChallenge() {
     }>(() => {
         if (showRecoveryInput) {
             return {
-                title: 'Recovery code',
-                description:
-                    'Please confirm access to your account by entering one of your emergency recovery codes.',
-                toggleText: 'login using an authentication code',
+                title: trans('authentication.heading.recovery_code'),
+                description: trans('authentication.description.recovery_code'),
+                toggleText: trans(
+                    'authentication.link.use_authentication_code',
+                ),
             };
         }
 
         return {
-            title: 'Authentication code',
-            description:
-                'Enter the authentication code provided by your authenticator application.',
-            toggleText: 'login using a recovery code',
+            title: trans('authentication.heading.authentication_code'),
+            description: trans(
+                'authentication.description.authentication_code',
+            ),
+            toggleText: trans('authentication.link.use_recovery_code'),
         };
-    }, [showRecoveryInput]);
+    }, [showRecoveryInput, trans]);
 
     setLayoutProps({
         title: authConfigContent.title,
@@ -51,7 +56,7 @@ export default function TwoFactorChallenge() {
 
     return (
         <>
-            <Head title="Two-factor authentication" />
+            <Head title={trans('security.heading.two_factor')} />
 
             <div className="space-y-6">
                 <Form
@@ -67,7 +72,9 @@ export default function TwoFactorChallenge() {
                                     <Input
                                         name="recovery_code"
                                         type="text"
-                                        placeholder="Enter recovery code"
+                                        placeholder={trans(
+                                            'authentication.placeholder.recovery_code',
+                                        )}
                                         autoFocus={showRecoveryInput}
                                         required
                                     />
@@ -109,11 +116,17 @@ export default function TwoFactorChallenge() {
                                 className="w-full"
                                 disabled={processing}
                             >
-                                Continue
+                                {' '}
+                                {trans('common.button.continue')}{' '}
                             </Button>
 
                             <div className="text-muted-foreground text-center text-sm">
-                                <span>or you can </span>
+                                <span>
+                                    {' '}
+                                    {trans(
+                                        'authentication.description.alternative',
+                                    )}{' '}
+                                </span>
                                 <button
                                     type="button"
                                     className="text-foreground cursor-pointer underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
@@ -131,3 +144,8 @@ export default function TwoFactorChallenge() {
         </>
     );
 }
+
+TwoFactorChallenge.layout = {
+    titleKey: 'authentication.heading.authentication_code',
+    descriptionKey: 'authentication.description.authentication_code',
+};

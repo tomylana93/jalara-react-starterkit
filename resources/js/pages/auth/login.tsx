@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -18,9 +19,11 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Log in" />
+            <Head title={trans('authentication.button.login')} />
 
             <PasskeyVerify />
 
@@ -33,7 +36,12 @@ export default function Login({ status, canResetPassword }: Props) {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.email_address',
+                                    )}{' '}
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -49,14 +57,22 @@ export default function Login({ status, canResetPassword }: Props) {
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
+                                    <Label htmlFor="password">
+                                        {' '}
+                                        {trans(
+                                            'authentication.label.password',
+                                        )}{' '}
+                                    </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
                                             className="ml-auto text-sm"
                                             tabIndex={5}
                                         >
-                                            Forgot your password?
+                                            {' '}
+                                            {trans(
+                                                'authentication.link.forgot_password',
+                                            )}{' '}
                                         </TextLink>
                                     )}
                                 </div>
@@ -66,7 +82,9 @@ export default function Login({ status, canResetPassword }: Props) {
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
+                                    placeholder={trans(
+                                        'authentication.label.password',
+                                    )}
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -77,7 +95,12 @@ export default function Login({ status, canResetPassword }: Props) {
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label htmlFor="remember">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.remember',
+                                    )}{' '}
+                                </Label>
                             </div>
 
                             <Button
@@ -87,15 +110,19 @@ export default function Login({ status, canResetPassword }: Props) {
                                 disabled={processing}
                                 data-test="login-button"
                             >
-                                {processing && <Spinner />}
-                                Log in
+                                {processing && <Spinner />}{' '}
+                                {trans('authentication.button.login')}{' '}
                             </Button>
                         </div>
 
                         <div className="text-muted-foreground text-center text-sm">
-                            Don't have an account?{' '}
+                            {' '}
+                            {trans(
+                                'authentication.description.no_account',
+                            )}{' '}
                             <TextLink href={register()} tabIndex={5}>
-                                Sign up
+                                {' '}
+                                {trans('authentication.link.signup')}{' '}
                             </TextLink>
                         </div>
                     </>
@@ -112,6 +139,6 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    titleKey: 'authentication.heading.login',
+    descriptionKey: 'authentication.description.login',
 };

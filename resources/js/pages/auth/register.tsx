@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -14,9 +15,11 @@ type Props = {
 };
 
 export default function Register({ passwordRules }: Props) {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Register" />
+            <Head title={trans('authentication.button.register')} />
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -27,7 +30,10 @@ export default function Register({ passwordRules }: Props) {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">
+                                    {' '}
+                                    {trans('authentication.label.name')}{' '}
+                                </Label>
                                 <Input
                                     id="name"
                                     type="text"
@@ -36,7 +42,9 @@ export default function Register({ passwordRules }: Props) {
                                     tabIndex={1}
                                     autoComplete="name"
                                     name="name"
-                                    placeholder="Full name"
+                                    placeholder={trans(
+                                        'authentication.placeholder.full_name',
+                                    )}
                                 />
                                 <InputError
                                     message={errors.name}
@@ -45,7 +53,12 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.email_address',
+                                    )}{' '}
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -59,14 +72,21 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.password',
+                                    )}{' '}
+                                </Label>
                                 <PasswordInput
                                     id="password"
                                     required
                                     tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
-                                    placeholder="Password"
+                                    placeholder={trans(
+                                        'authentication.label.password',
+                                    )}
                                     passwordrules={passwordRules}
                                 />
                                 <InputError message={errors.password} />
@@ -74,7 +94,10 @@ export default function Register({ passwordRules }: Props) {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.confirm_password',
+                                    )}{' '}
                                 </Label>
                                 <PasswordInput
                                     id="password_confirmation"
@@ -82,7 +105,9 @@ export default function Register({ passwordRules }: Props) {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder="Confirm password"
+                                    placeholder={trans(
+                                        'authentication.label.confirm_password',
+                                    )}
                                     passwordrules={passwordRules}
                                 />
                                 <InputError
@@ -96,15 +121,21 @@ export default function Register({ passwordRules }: Props) {
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >
-                                {processing && <Spinner />}
-                                Create account
+                                {processing && <Spinner />}{' '}
+                                {trans(
+                                    'authentication.button.create_account',
+                                )}{' '}
                             </Button>
                         </div>
 
                         <div className="text-muted-foreground text-center text-sm">
-                            Already have an account?{' '}
+                            {' '}
+                            {trans(
+                                'authentication.description.has_account',
+                            )}{' '}
                             <TextLink href={login()} tabIndex={6}>
-                                Log in
+                                {' '}
+                                {trans('authentication.button.login')}{' '}
                             </TextLink>
                         </div>
                     </>
@@ -115,6 +146,6 @@ export default function Register({ passwordRules }: Props) {
 }
 
 Register.layout = {
-    title: 'Create an account',
-    description: 'Enter your details below to create your account',
+    titleKey: 'authentication.heading.register',
+    descriptionKey: 'authentication.description.register',
 };

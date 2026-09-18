@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 // Components
 import { Form, Head } from '@inertiajs/react';
 import TextLink from '@/components/text-link';
@@ -7,14 +8,16 @@ import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 
 export default function VerifyEmail({ status }: { status?: string }) {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Email verification" />
+            <Head title={trans('authentication.heading.verify_email')} />
 
             {status === 'verification-link-sent' && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                    {' '}
+                    {trans('authentication.message.verification_sent')}{' '}
                 </div>
             )}
 
@@ -22,15 +25,18 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 {({ processing }) => (
                     <>
                         <Button disabled={processing} variant="secondary">
-                            {processing && <Spinner />}
-                            Resend verification email
+                            {processing && <Spinner />}{' '}
+                            {trans(
+                                'authentication.button.resend_verification',
+                            )}{' '}
                         </Button>
 
                         <TextLink
                             href={logout()}
                             className="mx-auto block text-sm"
                         >
-                            Log out
+                            {' '}
+                            {trans('navigation.button.logout')}{' '}
                         </TextLink>
                     </>
                 )}
@@ -40,7 +46,6 @@ export default function VerifyEmail({ status }: { status?: string }) {
 }
 
 VerifyEmail.layout = {
-    title: 'Email verification',
-    description:
-        'Please verify your email address by clicking on the link we just emailed to you.',
+    titleKey: 'authentication.heading.verify_email',
+    descriptionKey: 'authentication.description.verify_email',
 };

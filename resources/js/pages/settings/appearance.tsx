@@ -1,20 +1,26 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import Heading from '@/components/heading';
 import { edit as editAppearance } from '@/routes/appearance';
 
 export default function Appearance() {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Appearance settings" />
+            <Head title={trans('appearance.heading.settings')} />
 
-            <h1 className="sr-only">Appearance settings</h1>
+            <h1 className="sr-only">
+                {' '}
+                {trans('appearance.heading.settings')}{' '}
+            </h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Appearance settings"
-                    description="Update the appearance settings for your account"
+                    title={trans('appearance.heading.settings')}
+                    description={trans('appearance.description.settings')}
                 />
                 <AppearanceTabs />
             </div>
@@ -23,9 +29,9 @@ export default function Appearance() {
 }
 
 Appearance.layout = {
-    breadcrumbs: [
+    breadcrumbKeys: [
         {
-            title: 'Appearance settings',
+            titleKey: 'appearance.heading.settings',
             href: editAppearance(),
         },
     ],

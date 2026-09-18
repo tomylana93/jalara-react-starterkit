@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
@@ -62,6 +63,8 @@ function TwoFactorSetupStep({
     onNextStep: () => void;
     errors: string[];
 }) {
+    const { trans } = useTrans();
+
     const { resolvedAppearance } = useAppearance();
     const [copiedText, copy] = useClipboard();
     const IconComponent = copiedText === manualSetupKey ? Check : Copy;
@@ -104,7 +107,8 @@ function TwoFactorSetupStep({
                     <div className="relative flex w-full items-center justify-center">
                         <div className="bg-border absolute inset-0 top-1/2 h-px w-full" />
                         <span className="bg-card relative px-2 py-1">
-                            or, enter the code manually
+                            {' '}
+                            {trans('security.link.manual_code')}{' '}
                         </span>
                     </div>
 
@@ -145,6 +149,8 @@ function TwoFactorVerificationStep({
     onClose: () => void;
     onBack: () => void;
 }) {
+    const { trans } = useTrans();
+
     const [code, setCode] = useState<string>('');
     const pinInputContainerRef = useRef<HTMLDivElement>(null);
 
@@ -210,7 +216,8 @@ function TwoFactorVerificationStep({
                                 onClick={onBack}
                                 disabled={processing}
                             >
-                                Back
+                                {' '}
+                                {trans('common.button.back')}{' '}
                             </Button>
                             <Button
                                 type="submit"
@@ -219,7 +226,8 @@ function TwoFactorVerificationStep({
                                     processing || code.length < OTP_MAX_LENGTH
                                 }
                             >
-                                Confirm
+                                {' '}
+                                {trans('common.button.confirm')}{' '}
                             </Button>
                         </div>
                     </div>
@@ -252,6 +260,8 @@ export default function TwoFactorSetupModal({
     fetchSetupData,
     errors,
 }: Props) {
+    const { trans } = useTrans();
+
     const [showVerificationStep, setShowVerificationStep] =
         useState<boolean>(false);
 
@@ -262,27 +272,26 @@ export default function TwoFactorSetupModal({
     }>(() => {
         if (twoFactorEnabled) {
             return {
-                title: 'Two-factor authentication enabled',
-                description:
-                    'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
-                buttonText: 'Close',
+                title: trans('security.heading.two_factor_enabled'),
+                description: trans(
+                    'security.description.two_factor_setup_complete',
+                ),
+                buttonText: trans('common.button.close'),
             };
         }
 
         if (showVerificationStep) {
             return {
-                title: 'Verify authentication code',
-                description:
-                    'Enter the 6-digit code from your authenticator app',
-                buttonText: 'Continue',
+                title: trans('security.heading.verify_code'),
+                description: trans('security.description.verify_code'),
+                buttonText: trans('common.button.continue'),
             };
         }
 
         return {
-            title: 'Enable two-factor authentication',
-            description:
-                'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
-            buttonText: 'Continue',
+            title: trans('security.heading.enable_two_factor'),
+            description: trans('security.description.enable_two_factor'),
+            buttonText: trans('common.button.continue'),
         };
     }, [twoFactorEnabled, showVerificationStep]);
 

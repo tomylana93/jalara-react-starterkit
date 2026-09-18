@@ -1,3 +1,5 @@
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
 import inertia from '@inertiajs/vite';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import babel from '@rolldown/plugin-babel';
@@ -9,6 +11,28 @@ import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
     plugins: lazyPlugins(() => [
+        {
+            name: 'frontend-translations',
+            buildStart() {
+                execFileSync(
+                    'php',
+                    ['artisan', 'lang:export', '--no-interaction'],
+                    { stdio: 'inherit' },
+                );
+            },
+            handleHotUpdate({ file, server }) {
+                if (file.startsWith(path.resolve('lang') + path.sep)) {
+                    execFileSync(
+                        'php',
+                        ['artisan', 'lang:export', '--no-interaction'],
+                        { stdio: 'inherit' },
+                    );
+                    server.ws.send({ type: 'full-reload' });
+                    return [];
+                }
+            },
+        },
+
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
@@ -47,9 +71,10 @@ export default defineConfig({
             'bootstrap/ssr/**',
             'tailwind.config.js',
             'resources/js/actions/**',
-            'resources/js/components/ui/*',
+            'resources/js/components/ui/**',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            'resources/js/locales/generated/**',
         ],
         options: {
             denyWarnings: true,
@@ -66,7 +91,8 @@ export default defineConfig({
         ignorePatterns: [
             '.github/**',
             'composer.json',
-            'resources/js/components/ui/*',
+            'resources/js/locales/generated/**',
+            'resources/js/components/ui/**',
             'resources/views/mail/*',
         ],
         sortTailwindcss: {

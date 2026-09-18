@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -12,29 +13,38 @@ import {
 import PasskeyVerify from '@/components/passkey-verify';
 
 export default function ConfirmPassword() {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Confirm password" />
+            <Head title={trans('authentication.label.confirm_password')} />
 
             <PasskeyVerify
                 routes={{
                     options: confirmOptions(),
                     submit: confirmStore(),
                 }}
-                label="Confirm with passkey"
-                loadingLabel="Confirming..."
-                separator="Or confirm with password"
+                label={trans('authentication.button.confirm_passkey')}
+                loadingLabel={trans('authentication.label.confirming')}
+                separator={trans(
+                    'authentication.description.confirm_alternative',
+                )}
             />
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                {' '}
+                                {trans('authentication.label.password')}{' '}
+                            </Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder={trans(
+                                    'authentication.label.password',
+                                )}
                                 autoComplete="current-password"
                                 autoFocus
                             />
@@ -48,8 +58,10 @@ export default function ConfirmPassword() {
                                 disabled={processing}
                                 data-test="confirm-password-button"
                             >
-                                {processing && <Spinner />}
-                                Confirm password
+                                {processing && <Spinner />}{' '}
+                                {trans(
+                                    'authentication.label.confirm_password',
+                                )}{' '}
                             </Button>
                         </div>
                     </div>
@@ -60,7 +72,6 @@ export default function ConfirmPassword() {
 }
 
 ConfirmPassword.layout = {
-    title: 'Confirm password',
-    description:
-        'This is a secure area of the application. Please confirm your password before continuing.',
+    titleKey: 'authentication.label.confirm_password',
+    descriptionKey: 'authentication.description.confirm_password',
 };

@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { usePasskeyRegister } from '@laravel/passkeys/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
@@ -10,6 +11,8 @@ type Props = {
 };
 
 export default function PasskeyRegistration({ onSuccess }: Props) {
+    const { trans } = useTrans();
+
     const [name, setName] = useState(() => {
         const ua = navigator.userAgent;
 
@@ -59,7 +62,8 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
     if (!isSupported) {
         return (
             <div className="text-muted-foreground text-sm">
-                Passkeys are not supported in this browser.
+                {' '}
+                {trans('security.message.passkeys_unsupported')}{' '}
             </div>
         );
     }
@@ -67,7 +71,8 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
     if (!showForm) {
         return (
             <Button variant="outline" onClick={() => setShowForm(true)}>
-                Add passkey
+                {' '}
+                {trans('security.button.add_passkey')}{' '}
             </Button>
         );
     }
@@ -78,18 +83,22 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
             className="border-border bg-muted/50 space-y-4 rounded-lg border p-4"
         >
             <div className="grid gap-2">
-                <Label htmlFor="passkey-name">Passkey name</Label>
+                <Label htmlFor="passkey-name">
+                    {' '}
+                    {trans('security.label.passkey_name')}{' '}
+                </Label>
                 <Input
                     id="passkey-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g., MacBook Pro, iPhone"
+                    placeholder={trans('security.placeholder.passkey_name')}
                     className="border-foreground/20 mt-1 block w-full"
                     autoFocus
                 />
                 <p className="text-muted-foreground text-xs">
-                    A name helps you identify this passkey later.
+                    {' '}
+                    {trans('security.description.passkey_name')}{' '}
                 </p>
             </div>
 
@@ -97,10 +106,13 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
 
             <div className="flex gap-2">
                 <Button type="submit" disabled={isLoading || !name.trim()}>
-                    {isLoading ? 'Registering...' : 'Register passkey'}
+                    {isLoading
+                        ? trans('security.label.registering')
+                        : trans('security.button.register_passkey')}
                 </Button>
                 <Button type="button" variant="ghost" onClick={handleCancel}>
-                    Cancel
+                    {' '}
+                    {trans('common.button.cancel')}{' '}
                 </Button>
             </div>
         </form>

@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "allowImportingTsExtensions": true,
         /* Visit https://aka.ms/tsconfig to read more about this file */
 
         /* Projects */
@@ -113,6 +114,7 @@
         "jsx": "react-jsx"
     },
     "include": [
+        "tests/Frontend/**/*.ts",
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
         "resources/js/**/*.tsx"

@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -14,9 +15,11 @@ type Props = {
 };
 
 export default function ResetPassword({ token, email, passwordRules }: Props) {
+    const { trans } = useTrans();
+
     return (
         <>
-            <Head title="Reset password" />
+            <Head title={trans('authentication.heading.reset_password')} />
 
             <Form
                 {...update.form()}
@@ -26,7 +29,10 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                 {({ processing, errors }) => (
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                                {' '}
+                                {trans('authentication.label.email')}{' '}
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -43,14 +49,19 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                {' '}
+                                {trans('authentication.label.password')}{' '}
+                            </Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 autoFocus
-                                placeholder="Password"
+                                placeholder={trans(
+                                    'authentication.label.password',
+                                )}
                                 passwordrules={passwordRules}
                             />
                             <InputError message={errors.password} />
@@ -58,14 +69,19 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
 
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">
-                                Confirm password
+                                {' '}
+                                {trans(
+                                    'authentication.label.confirm_password',
+                                )}{' '}
                             </Label>
                             <PasswordInput
                                 id="password_confirmation"
                                 name="password_confirmation"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
-                                placeholder="Confirm password"
+                                placeholder={trans(
+                                    'authentication.label.confirm_password',
+                                )}
                                 passwordrules={passwordRules}
                             />
                             <InputError
@@ -80,8 +96,10 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             disabled={processing}
                             data-test="reset-password-button"
                         >
-                            {processing && <Spinner />}
-                            Reset password
+                            {processing && <Spinner />}{' '}
+                            {trans(
+                                'authentication.heading.reset_password',
+                            )}{' '}
                         </Button>
                     </div>
                 )}
@@ -91,6 +109,6 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
 }
 
 ResetPassword.layout = {
-    title: 'Reset password',
-    description: 'Please enter your new password below',
+    titleKey: 'authentication.heading.reset_password',
+    descriptionKey: 'authentication.description.reset_password',
 };

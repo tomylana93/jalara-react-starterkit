@@ -77,6 +77,8 @@
             "Composer\\Config::disableProcessTimeout",
             "pnpm run check",
             "pnpm run types:check",
+            "pnpm run test:frontend",
+            "pnpm run test:ssr",
             "@test:check",
             "@php artisan test --ci"
         ],
@@ -104,7 +106,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan lang:export --no-interaction"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",

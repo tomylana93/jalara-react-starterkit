@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { router } from '@inertiajs/react';
 import { KeyRound } from 'lucide-react';
 import { destroy } from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyRegistrationController';
@@ -12,20 +13,28 @@ export type Props = {
 };
 
 const EmptyState = () => {
+    const { trans } = useTrans();
+
     return (
         <div className="p-8 text-center">
             <div className="bg-muted mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl">
                 <KeyRound className="text-muted-foreground h-7 w-7" />
             </div>
-            <p className="font-medium">No passkeys yet</p>
+            <p className="font-medium">
+                {' '}
+                {trans('security.heading.no_passkeys')}{' '}
+            </p>
             <p className="text-muted-foreground mt-1 text-sm">
-                Add a passkey to sign in without a password
+                {' '}
+                {trans('security.description.no_passkeys')}{' '}
             </p>
         </div>
     );
 };
 
 export default function ManagePasskeys(props: Props) {
+    const { trans } = useTrans();
+
     const passkeys = props.passkeys ?? [];
 
     const handleDelete = (id: number, onError: () => void) => {
@@ -47,8 +56,8 @@ export default function ManagePasskeys(props: Props) {
         <div className="space-y-6">
             <Heading
                 variant="small"
-                title="Passkeys"
-                description="Manage your passkeys for passwordless sign-in"
+                title={trans('security.heading.passkeys')}
+                description={trans('security.description.passkeys')}
             />
 
             <div className="border-border overflow-hidden rounded-lg border">

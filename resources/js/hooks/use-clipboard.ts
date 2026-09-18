@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 // Credit: https://usehooks-ts.com/
 import { useState } from 'react';
 
@@ -6,11 +7,13 @@ export type CopyFn = (text: string) => Promise<boolean>;
 export type UseClipboardReturn = [CopiedValue, CopyFn];
 
 export function useClipboard(): UseClipboardReturn {
+    const { trans } = useTrans();
+
     const [copiedText, setCopiedText] = useState<CopiedValue>(null);
 
     const copy: CopyFn = async (text) => {
         if (!navigator?.clipboard) {
-            console.warn('Clipboard not supported');
+            console.warn(trans('common.message.clipboard_unsupported'));
 
             return false;
         }
@@ -21,7 +24,7 @@ export function useClipboard(): UseClipboardReturn {
 
             return true;
         } catch (error) {
-            console.warn('Copy failed', error);
+            console.warn(trans('common.message.copy_failed'), error);
             setCopiedText(null);
 
             return false;

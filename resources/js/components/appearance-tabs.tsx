@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import type { LucideIcon } from 'lucide-react';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import type { HTMLAttributes } from 'react';
@@ -9,12 +10,18 @@ export default function AppearanceToggleTab({
     className = '',
     ...props
 }: HTMLAttributes<HTMLDivElement>) {
+    const { trans } = useTrans();
+
     const { appearance, updateAppearance } = useAppearance();
 
     const tabs: { value: Appearance; icon: LucideIcon; label: string }[] = [
-        { value: 'light', icon: Sun, label: 'Light' },
-        { value: 'dark', icon: Moon, label: 'Dark' },
-        { value: 'system', icon: Monitor, label: 'System' },
+        { value: 'light', icon: Sun, label: trans('appearance.label.light') },
+        { value: 'dark', icon: Moon, label: trans('appearance.label.dark') },
+        {
+            value: 'system',
+            icon: Monitor,
+            label: trans('appearance.label.system'),
+        },
     ];
 
     return (

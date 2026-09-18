@@ -1,3 +1,4 @@
+import { useTrans } from '@/hooks/use-trans';
 import { Form, Head, usePage } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
@@ -22,19 +23,21 @@ export default function Profile({
     mustVerifyEmail: boolean;
     status?: string;
 }) {
+    const { trans } = useTrans();
+
     const { auth } = usePage<PageProps>().props;
 
     return (
         <>
-            <Head title="Profile settings" />
+            <Head title={trans('profile.heading.settings')} />
 
-            <h1 className="sr-only">Profile settings</h1>
+            <h1 className="sr-only"> {trans('profile.heading.settings')} </h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profile"
-                    description="Update your name and email address"
+                    title={trans('navigation.label.profile')}
+                    description={trans('profile.description.settings')}
                 />
 
                 <Form
@@ -47,7 +50,10 @@ export default function Profile({
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">
+                                    {' '}
+                                    {trans('authentication.label.name')}{' '}
+                                </Label>
 
                                 <Input
                                     id="name"
@@ -56,7 +62,9 @@ export default function Profile({
                                     name="name"
                                     required
                                     autoComplete="name"
-                                    placeholder="Full name"
+                                    placeholder={trans(
+                                        'authentication.placeholder.full_name',
+                                    )}
                                 />
 
                                 <InputError
@@ -66,7 +74,12 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">
+                                    {' '}
+                                    {trans(
+                                        'authentication.label.email_address',
+                                    )}{' '}
+                                </Label>
 
                                 <Input
                                     id="email"
@@ -76,7 +89,9 @@ export default function Profile({
                                     name="email"
                                     required
                                     autoComplete="username"
-                                    placeholder="Email address"
+                                    placeholder={trans(
+                                        'authentication.label.email_address',
+                                    )}
                                 />
 
                                 <InputError
@@ -89,22 +104,29 @@ export default function Profile({
                                 auth.user.email_verified_at === null && (
                                     <div>
                                         <p className="text-muted-foreground -mt-4 text-sm">
-                                            Your email address is unverified.{' '}
+                                            {' '}
+                                            {trans(
+                                                'profile.message.email_unverified',
+                                            )}{' '}
                                             <Link
                                                 href={send()}
                                                 as="button"
                                                 className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                             >
-                                                Click here to re-send the
-                                                verification email.
+                                                {' '}
+                                                {trans(
+                                                    'profile.link.resend_verification',
+                                                )}{' '}
                                             </Link>
                                         </p>
 
                                         {status ===
                                             'verification-link-sent' && (
                                             <div className="mt-2 text-sm font-medium text-green-600">
-                                                A new verification link has been
-                                                sent to your email address.
+                                                {' '}
+                                                {trans(
+                                                    'profile.message.verification_sent',
+                                                )}{' '}
                                             </div>
                                         )}
                                     </div>
@@ -115,7 +137,8 @@ export default function Profile({
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
-                                    Save
+                                    {' '}
+                                    {trans('common.button.save')}{' '}
                                 </Button>
                             </div>
                         </>
@@ -129,9 +152,9 @@ export default function Profile({
 }
 
 Profile.layout = {
-    breadcrumbs: [
+    breadcrumbKeys: [
         {
-            title: 'Profile settings',
+            titleKey: 'profile.heading.settings',
             href: edit(),
         },
     ],
