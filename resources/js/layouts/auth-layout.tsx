@@ -1,3 +1,4 @@
+import AppearanceMenu from '@/components/appearance-menu';
 import AuthLayoutTemplate from '@/layouts/auth/auth-split-layout';
 import { useTrans } from '@/hooks/use-trans';
 import type { TextMessageKey } from '@/types';
@@ -16,13 +17,18 @@ export default function AuthLayout({
 }) {
     const { trans } = useTrans();
     return (
-        <AuthLayoutTemplate
-            title={title || (titleKey ? trans(titleKey) : '')}
-            description={
-                description || (descriptionKey ? trans(descriptionKey) : '')
-            }
-        >
-            {children}
-        </AuthLayoutTemplate>
+        <div className="relative">
+            <header className="absolute top-4 right-4 z-20">
+                <AppearanceMenu />
+            </header>
+            <AuthLayoutTemplate
+                title={title || (titleKey ? trans(titleKey) : '')}
+                description={
+                    description || (descriptionKey ? trans(descriptionKey) : '')
+                }
+            >
+                {children}
+            </AuthLayoutTemplate>
+        </div>
     );
 }

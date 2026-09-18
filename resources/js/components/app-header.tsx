@@ -1,6 +1,7 @@
 import { useTrans } from '@/hooks/use-trans';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import AppearanceMenu from '@/components/appearance-menu';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -179,7 +180,8 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         </NavigationMenu>
                     </div>
 
-                    <div className="ml-auto flex items-center space-x-2">
+                    <div className="ml-auto flex items-center gap-2">
+                        <AppearanceMenu />
                         <div className="relative flex items-center space-x-1">
                             <Button
                                 variant="ghost"
