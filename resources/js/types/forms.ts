@@ -39,6 +39,14 @@ export type ProfileForm = {
     email: string;
 };
 
+export type GeneralSettingsForm = {
+    application_name: string;
+    application_description: string;
+    contact_email: string;
+    default_locale: string;
+    timezone: string;
+};
+
 export type UpdatePasswordForm = {
     current_password: string;
     password: string;
