@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import {
     store,
     destroy,
-} from '@/actions/App/Http/Controllers/Settings/AvatarController';
+} from '@/actions/App/Http/Controllers/Account/AvatarController';
 import FileUploader from '@/components/file-uploader';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';

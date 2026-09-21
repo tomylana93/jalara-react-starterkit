@@ -43,8 +43,8 @@ void test('production SSR renders localized layouts and keeps consecutive reques
                 'authentication.heading.authentication_code',
             ],
             ['dashboard', 'navigation.label.dashboard'],
-            ['settings/profile', 'profile.heading.settings'],
-            ['settings/security', 'security.heading.update_password'],
+            ['account/profile', 'profile.heading.settings'],
+            ['account/security', 'security.heading.update_password'],
         ]) {
             const result = await render({
                 component,
@@ -148,7 +148,7 @@ void test('production SSR renders localized layouts and keeps consecutive reques
                 assert.match(input, /\binputmode="email"/i, component);
             }
 
-            if (component === 'settings/profile') {
+            if (component === 'account/profile') {
                 assert.ok(result.body.includes('saved-avatar.png'));
                 assert.ok(result.body.includes('1.5 KB'));
                 assert.match(

@@ -2,7 +2,7 @@ import { useTrans } from '@/hooks/use-trans';
 import { useForm, Head, usePage } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
 import { Link } from '@inertiajs/react';
-import { update } from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import { update } from '@/actions/App/Http/Controllers/Account/ProfileController';
 import type { ProfileForm } from '@/types';
 import DeleteUser from '@/components/delete-user';
 import AvatarUploader from '@/components/avatar-uploader';

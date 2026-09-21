@@ -113,7 +113,7 @@ test('profile reload exposes the saved avatar and shared avatar URL', function (
     $response = $this->actingAs($user)->get(route('profile.edit'));
 
     $response->assertInertia(fn (Assert $page): Assert => $page
-        ->component('settings/profile')
+        ->component('account/profile')
         ->where('avatarMedia.name', 'saved')
         ->where('avatarMedia.thumbnailUrl', $avatar->getUrl('thumbnail'))
         ->where('avatarMedia.sizeBytes', $avatar->size)

@@ -2,7 +2,7 @@ import { useTrans } from '@/hooks/use-trans';
 import { useForm, Head } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
 import { useRef } from 'react';
-import { update } from '@/actions/App/Http/Controllers/Settings/SecurityController';
+import { update } from '@/actions/App/Http/Controllers/Account/SecurityController';
 import type { UpdatePasswordForm } from '@/types';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';

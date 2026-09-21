@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Settings;
+namespace App\Http\Controllers\Account;
 
 use App\Actions\Profile\UploadAvatar;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\AvatarUploadRequest;
+use App\Http\Requests\Account\AvatarUploadRequest;
 use App\Http\Resources\UploadedFileResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

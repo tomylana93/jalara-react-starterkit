@@ -10,7 +10,7 @@ import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
 
-export default function SettingsLayout({ children }: PropsWithChildren) {
+export default function AccountLayout({ children }: PropsWithChildren) {
     const { trans } = useTrans();
 
     const sidebarNavItems: NavItem[] = [

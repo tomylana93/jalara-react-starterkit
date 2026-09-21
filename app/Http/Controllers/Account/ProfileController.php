@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Settings;
+namespace App\Http\Controllers\Account;
 
 use App\Actions\Profile\DeleteProfile;
 use App\Actions\Profile\UpdateProfile;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\ProfileDeleteRequest;
-use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Http\Requests\Account\ProfileDeleteRequest;
+use App\Http\Requests\Account\ProfileUpdateRequest;
 use App\Http\Resources\UploadedFileResource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +24,7 @@ class ProfileController extends Controller
     {
         $avatar = $request->user()->getFirstMedia('avatar');
 
-        return Inertia::render('settings/profile', [
+        return Inertia::render('account/profile', [
             'avatarMedia' => $avatar ? new UploadedFileResource($avatar)->resolve($request) : null,
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),

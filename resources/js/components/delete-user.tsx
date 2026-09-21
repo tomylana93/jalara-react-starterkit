@@ -2,7 +2,7 @@ import { useTrans } from '@/hooks/use-trans';
 import { useForm } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
 import { useRef } from 'react';
-import { destroy } from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import { destroy } from '@/actions/App/Http/Controllers/Account/ProfileController';
 import type { DeleteUserForm } from '@/types';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
