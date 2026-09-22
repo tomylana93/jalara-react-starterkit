@@ -47,6 +47,10 @@ export type GeneralSettingsForm = {
     timezone: string;
 };
 
+export type BrandSettingsForm = {
+    color_preset: string;
+};
+
 export type UpdatePasswordForm = {
     current_password: string;
     password: string;

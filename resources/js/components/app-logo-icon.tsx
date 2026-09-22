@@ -1,8 +1,22 @@
-import type { SVGAttributes } from 'react';
+import { usePage } from '@inertiajs/react';
 
-export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
+type AppLogoIconProps = {
+    className?: string;
+};
+
+export default function AppLogoIcon({ className }: AppLogoIconProps) {
+    const logoSquare = usePage().props.brand?.logoSquare;
+
+    if (logoSquare) {
+        return <img src={logoSquare} alt="" className={className} />;
+    }
+
     return (
-        <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
+        <svg
+            className={className}
+            viewBox="0 0 40 42"
+            xmlns="http://www.w3.org/2000/svg"
+        >
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"

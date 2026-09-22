@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { Brand } from '@/types/brand';
 import type { Localization } from '@/types';
 
 declare module 'react' {
@@ -13,6 +14,7 @@ declare module '@inertiajs/core' {
             localization: Localization;
             name: string;
             auth: Auth;
+            brand?: Brand;
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

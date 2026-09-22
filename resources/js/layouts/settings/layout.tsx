@@ -6,7 +6,8 @@ import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useTrans } from '@/hooks/use-trans';
 import { cn, toUrl } from '@/lib/utils';
-import { edit } from '@/routes/settings/general';
+import { edit as editBrand } from '@/routes/settings/brand';
+import { edit as editGeneral } from '@/routes/settings/general';
 import type { NavItem } from '@/types';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
@@ -15,7 +16,12 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const sidebarNavItems: NavItem[] = [
         {
             title: trans('navigation.label.general'),
-            href: edit(),
+            href: editGeneral(),
+            icon: null,
+        },
+        {
+            title: trans('navigation.label.brand'),
+            href: editBrand(),
             icon: null,
         },
     ];

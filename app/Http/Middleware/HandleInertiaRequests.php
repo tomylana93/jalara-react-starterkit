@@ -2,12 +2,17 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\BrandAsset;
+use App\Settings\BrandSettings;
+use App\Support\BrandPalette;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Override;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly BrandSettings $brandSettings) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -43,6 +48,14 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'brand' => [
+                'logoFull' => $this->brandSettings->assetUrl(BrandAsset::LogoFull),
+                'logoSquare' => $this->brandSettings->assetUrl(BrandAsset::LogoSquare),
+                'favicon' => $this->brandSettings->assetUrl(BrandAsset::Favicon),
+                'ogImage' => $this->brandSettings->assetUrl(BrandAsset::OgImage),
+                'colorPreset' => $this->brandSettings->color_preset->value,
+                'themeTokens' => BrandPalette::tokens($this->brandSettings->color_preset),
+            ],
             'localization' => [
                 'locale' => app()->getLocale(),
                 'fallbackLocale' => config('app.fallback_locale'),

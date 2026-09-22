@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+@php
+    $brand = $page['props']['brand'];
+    $brandTokens = $brand['themeTokens'];
+    $brandFavicon = $brand['favicon'];
+    $brandOgImage = $brand['ogImage'];
+@endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
@@ -28,11 +34,28 @@
             html.dark {
                 background-color: oklch(0.145 0 0);
             }
+
+            :root {
+                @foreach ($brandTokens['light'] as $token => $value)
+                    {{ $token }}: {{ $value }};
+                @endforeach
+            }
+
+            .dark {
+                @foreach ($brandTokens['dark'] as $token => $value)
+                    {{ $token }}: {{ $value }};
+                @endforeach
+            }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="{{ $brandFavicon ?? '/favicon.ico' }}" sizes="any">
+        @unless ($brandFavicon)
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        @endunless
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @if ($brandOgImage)
+            <meta property="og:image" content="{{ $brandOgImage }}">
+        @endif
 
         @fonts
 
