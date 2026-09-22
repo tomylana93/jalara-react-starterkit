@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import type { SubmitEventHandler } from 'react';
+import { useTranslation } from 'react-i18next';
 import { update } from '@/actions/App/Http/Controllers/Settings/GeneralSettingsController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { useTrans } from '@/hooks/use-trans';
+import { resolveLocalization } from '@/lib/i18n';
 import { edit } from '@/routes/settings/general';
 import type { GeneralSettingsForm } from '@/types';
 
@@ -27,6 +29,7 @@ export default function GeneralSettings({
     timezones,
 }: GeneralSettingsProps) {
     const { trans } = useTrans();
+    const { i18n } = useTranslation();
     const form =
         useForm<GeneralSettingsForm>(settings).withPrecognition(update());
 
@@ -34,6 +37,15 @@ export default function GeneralSettings({
         event.preventDefault();
         form.submit(update(), {
             preserveScroll: true,
+            onSuccess: (page) => {
+                const localization = resolveLocalization(
+                    page.props.localization,
+                );
+
+                i18n.options.fallbackLng = localization.fallbackLocale;
+                void i18n.changeLanguage(localization.locale);
+                document.documentElement.lang = localization.locale;
+            },
         });
     };
 

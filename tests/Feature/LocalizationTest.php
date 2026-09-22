@@ -1,13 +1,16 @@
 <?php
 
 use App\Models\User;
+use App\Settings\GeneralSettings;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Inertia\Testing\AssertableInertia as Assert;
 
 // Locale remains an application setting; browser headers do not select it.
 test('configured locale is shared with the frontend and rendered into HTML', function (string $locale): void {
-    app()->setLocale($locale);
+    $settings = resolve(GeneralSettings::class);
+    $settings->default_locale = $locale;
+    $settings->save();
     config(['app.fallback_locale' => 'en']);
 
     $this->withHeader('Accept-Language', $locale === 'en' ? 'id' : 'en')->get(route('login'))->assertSeeHtml('lang="'.$locale.'"')
@@ -17,7 +20,9 @@ test('configured locale is shared with the frontend and rendered into HTML', fun
 })->with(['en', 'id']);
 
 test('login validation is translated by the server', function (string $locale, string $message): void {
-    app()->setLocale($locale);
+    $settings = resolve(GeneralSettings::class);
+    $settings->default_locale = $locale;
+    $settings->save();
 
     $this->post(route('login'), [])
         ->assertSessionHasErrors(['email' => $message]);
@@ -27,7 +32,9 @@ test('login validation is translated by the server', function (string $locale, s
 ]);
 
 test('invalid credentials use the configured language', function (string $locale, string $message): void {
-    app()->setLocale($locale);
+    $settings = resolve(GeneralSettings::class);
+    $settings->default_locale = $locale;
+    $settings->save();
 
     $this->post(route('login'), ['email' => 'missing@example.test', 'password' => 'invalid-password'])
         ->assertSessionHasErrors(['email' => $message]);
@@ -37,7 +44,9 @@ test('invalid credentials use the configured language', function (string $locale
 ]);
 
 test('profile success toast is translated once by the server', function (): void {
-    app()->setLocale('id');
+    $settings = resolve(GeneralSettings::class);
+    $settings->default_locale = 'id';
+    $settings->save();
     $user = User::factory()->create();
 
     $this->actingAs($user)->patch(route('profile.update'), [

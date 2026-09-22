@@ -56,6 +56,27 @@ test('authenticated user can update general settings', function (): void {
         ->and($settings->timezone)->toBe('Asia/Jakarta');
 });
 
+test('updating the default locale immediately localizes the application', function (): void {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->patch(route('settings.general.update'), [
+        'application_name' => 'Jalara',
+        'application_description' => null,
+        'contact_email' => null,
+        'default_locale' => 'id',
+        'timezone' => 'Asia/Jakarta',
+    ]);
+
+    $response
+        ->assertRedirect(route('settings.general.edit'))
+        ->assertInertiaFlash('toast.message', 'Pengaturan umum berhasil diperbarui.');
+
+    $this->get(route('settings.general.edit'))->assertInertia(fn (Assert $page): Assert => $page
+        ->component('settings/general')
+        ->where('localization.locale', 'id')
+    );
+});
+
 test('invalid general settings are rejected without changing persisted values', function (): void {
     $user = User::factory()->create();
     $settings = resolve(GeneralSettings::class);

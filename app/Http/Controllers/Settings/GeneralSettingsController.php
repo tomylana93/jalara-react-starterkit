@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Settings;
 
+use App\Actions\Settings\UpdateGeneralSettings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\UpdateGeneralSettingsRequest;
 use App\Settings\GeneralSettings;
@@ -28,16 +29,12 @@ class GeneralSettingsController extends Controller
         ]);
     }
 
-    public function update(UpdateGeneralSettingsRequest $request, GeneralSettings $settings): RedirectResponse
-    {
-        $validated = $request->validated();
-
-        $settings->application_name = $validated['application_name'];
-        $settings->application_description = $validated['application_description'];
-        $settings->contact_email = $validated['contact_email'];
-        $settings->default_locale = $validated['default_locale'];
-        $settings->timezone = $validated['timezone'];
-        $settings->save();
+    public function update(
+        UpdateGeneralSettingsRequest $request,
+        GeneralSettings $settings,
+        UpdateGeneralSettings $updateGeneralSettings,
+    ): RedirectResponse {
+        $updateGeneralSettings->handle($settings, $request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('general_settings.message.updated')]);
 
